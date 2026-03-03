@@ -1,4 +1,4 @@
-# Ponto Integration Rony
+# Ponto Integration
 
 Integration app that connects [Ponto](https://myponto.com) with ERPNext: OAuth2 token management and syncing bank transactions from Ponto into ERPNext Bank Transactions.
 
