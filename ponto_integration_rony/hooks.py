@@ -8,7 +8,7 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# required_apps = []
+required_apps = ["erpnext"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -27,6 +27,9 @@ app_license = "mit"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/ponto_integration_rony/css/ponto_integration_rony.css"
 # app_include_js = "/assets/ponto_integration_rony/js/ponto_integration_rony.js"
+
+# include js in doctype views
+doctype_js = {"Bank Account": "public/js/bank_account.js"}
 
 # include js, css files in header of web template
 # web_include_css = "/assets/ponto_integration_rony/css/ponto_integration_rony.css"
