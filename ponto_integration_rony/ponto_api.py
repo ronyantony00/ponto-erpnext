@@ -15,6 +15,7 @@ from urllib.parse import urljoin
 
 # Ponto API base (token and API use same host; sandbox vs production by credentials)
 PONTO_API_BASE = "https://api.myponto.com"
+logger = frappe.logger("ponto_integration_rony")
 
 
 def fetch_access_token(client_id: str, client_secret: str, use_sandbox: bool = True) -> dict:
@@ -39,6 +40,7 @@ def fetch_access_token(client_id: str, client_secret: str, use_sandbox: bool = T
 		resp.raise_for_status()
 	except requests.exceptions.RequestException as e:
 		msg = _ponto_error_message(e, _token_status_hint=True)
+		logger.error("Ponto token request failed: %s", msg)
 		frappe.throw(_("Ponto API error: {0}").format(msg))
 
 	data = resp.json()
@@ -64,6 +66,7 @@ def get_transactions(access_token: str, account_id: str, limit: int = 10, use_sa
 		resp.raise_for_status()
 	except requests.exceptions.RequestException as e:
 		msg = _ponto_error_message(e, _token_status_hint=False)
+		logger.error("Ponto transaction request failed for account %s: %s", account_id, msg)
 		frappe.throw(_("Ponto API error: {0}").format(msg))
 
 	data = resp.json()
@@ -98,8 +101,8 @@ def _ponto_error_message(e: requests.exceptions.RequestException, _token_status_
 				msg = detail
 			else:
 				msg = body.get("error_description") or body.get("detail") or body.get("error") or msg
-		except Exception:
-			pass
+		except ValueError:
+			logger.warning("Ponto error response was not valid JSON (status: %s)", resp.status_code)
 		code = resp.status_code
 		key = (code, _token_status_hint)
 		entry = PONTO_STATUS_MESSAGES.get(key) or PONTO_STATUS_MESSAGES.get((code, None))
