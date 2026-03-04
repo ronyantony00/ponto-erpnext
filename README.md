@@ -43,13 +43,40 @@ Integration app that connects [Ponto](https://myponto.com) with ERPNext: OAuth2 
    - Set **Account ID**: the Ponto account **UUID** (not the IBAN). To get it:
      - Call `GET https://api.myponto.com/accounts?page[limit]=10` with header `Authorization: Bearer <your_access_token>`.
      - Use the `id` of the account you want (e.g. `c3f966d6-eaa9-4074-8799-3b4acc2c3a66`).
-    - create a Bank and Bank Account in ERPNext if not exists
+   - create a Bank and Bank Account in ERPNext if not exists
    - Link **Bank Account** to the ERPNext Bank Account that corresponds to this Ponto account.
 
 4. **Sync transactions**
 
    - Open the **Bank Account** that you linked in Ponto Settings.
    - Use the **Sync from Ponto** button to fetch the last 10 transactions and create Bank Transactions (duplicates are skipped by reference number).
+
+---
+
+## Validation (Assessment Acceptance Checklist)
+
+Use this quick sequence before submission:
+
+1. **Token fetch**
+   - Open **Ponto Settings** and click **Fetch Token**.
+   - Confirm `access_token` and `token_expiry` are populated.
+
+2. **5-minute auto refresh**
+   - Temporarily set `token_expiry` to a time within the next 5 minutes.
+   - Click **Refresh Token** (or run **Sync from Ponto**).
+   - Confirm token refresh occurs and `token_expiry` is extended.
+
+3. **First sync creates records**
+   - Open the linked **Bank Account** and click **Sync from Ponto**.
+   - Confirm `Bank Transaction` records are created.
+
+4. **Second sync skips duplicates**
+   - Run **Sync from Ponto** again immediately.
+   - Confirm no duplicates are created for existing `reference_number` values.
+
+5. **Deposit/withdrawal mapping check**
+   - Verify a positive amount maps to `deposit` and negative amount maps to `withdrawal`.
+   - Verify both fields are never populated simultaneously on one record.
 
 ---
 
